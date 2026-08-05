@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\Like;
+use App\Http\Requests\ProductRequest;
+use App\Http\Requests\PurchaseRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -79,22 +81,14 @@ class ProductController extends Controller
     /**
  * 商品購入処理
  */
-    public function buy(Request $request, $id)
+    /**
+ * 商品購入処理
+ */
+    public function buy(PurchaseRequest $request, $id)
     {
-        $request->validate([
-            'quantity' => 'required|integer|min:1',
-        ]);
-
         $product = Product::findOrFail($id);
 
-        // 在庫がない場合
-        if ($product->stock <= 0) {
-            return back()->withErrors([
-                'quantity' => 'この商品は売り切れです。',
-            ]);
-        }
-
-        // 在庫数を超えて購入できないようにする
+        // 在庫より多く購入できないようにする
         if ($request->quantity > $product->stock) {
             return back()->withErrors([
                 'quantity' => '在庫数を超えて購入することはできません。',
@@ -102,13 +96,13 @@ class ProductController extends Controller
         }
 
         // 購入履歴を保存
-        Sale::createSale(
-            Auth::id(),
-            $product->id,
-            $request->quantity
-        );
+        Sale::create([
+            'user_id' => Auth::id(),
+            'product_id' => $product->id,
+            'quantity' => $request->quantity,
+        ]);
 
-        // 購入した個数分だけ在庫を減らす
+        // 在庫を減らす
         $product->stock -= $request->quantity;
         $product->save();
 
@@ -126,16 +120,11 @@ class ProductController extends Controller
     /**
      * 商品登録処理
      */
-    public function store(Request $request)
+    /**
+     * 商品登録処理
+     */
+    public function store(ProductRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|integer|min:0',
-            'description' => 'required|string',
-            'stock' => 'required|integer|min:0',
-            'image' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,svg|max:2048',
-        ]);
-
         $img_path = null;
 
         if ($request->hasFile('image')) {
@@ -179,16 +168,11 @@ class ProductController extends Controller
     /**
      * 商品更新処理
      */
-    public function update(Request $request, $id)
+    /**
+ * 商品更新処理
+ */
+    public function update(ProductRequest $request, $id)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|integer|min:0',
-            'description' => 'required|string',
-            'stock' => 'required|integer|min:0',
-            'image' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,svg|max:2048',
-        ]);
-
         $product = Product::findOrFail($id);
 
         $product->product_name = $request->name;

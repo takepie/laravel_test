@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
@@ -30,40 +31,13 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        return Validator::make($data, [
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-            ],
+        $request = new RegisterRequest();
 
-            'name_kanji' => [
-                'required',
-                'string',
-                'max:255',
-            ],
-
-            'name_kana' => [
-                'required',
-                'string',
-                'max:255',
-            ],
-
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                'unique:users',
-            ],
-
-            'password' => [
-                'required',
-                'string',
-                'min:8',
-                'confirmed',
-            ],
-        ]);
+        return Validator::make(
+            $data,
+            $request->rules(),
+            $request->messages()
+        );
     }
 
     /**

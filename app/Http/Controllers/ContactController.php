@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\ContactRequest;
 
 class ContactController extends Controller
 {
@@ -17,14 +17,8 @@ class ContactController extends Controller
     /**
      * お問い合わせ送信処理
      */
-    public function send(Request $request)
+    public function send(ContactRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'message' => 'required|string|max:2000',
-        ]);
-
         return redirect()
             ->route('products.index');
     }

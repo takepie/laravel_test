@@ -9,6 +9,17 @@
 
     <h1>アカウント情報編集</h1>
 
+    {{-- バリデーションエラー --}}
+    @if ($errors->any())
+        <div class="validation-errors">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <form action="{{ route('mypage.update') }}" method="POST">
 
         @csrf

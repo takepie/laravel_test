@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\MyPageRequest;
 use App\Models\Product;
 use App\Models\Sale;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 
 class MyPageController extends Controller
 {
+    /**
+     * マイページ
+     */
     public function index()
     {
         $user = Auth::user();
@@ -26,29 +29,21 @@ class MyPageController extends Controller
         ));
     }
 
-
-/**
- * アカウント情報編集画面
- */
-public function edit()
-{
-    $user = Auth::user();
-
-    return view('mypage.edit', compact('user'));
-}
-
-/**
- * アカウント情報更新処理
- */
-    public function update(Request $request)
+    /**
+     * アカウント情報編集画面
+     */
+    public function edit()
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'name_kanji' => 'nullable|string|max:255',
-            'name_kana' => 'nullable|string|max:255',
-        ]);
+        $user = Auth::user();
 
+        return view('mypage.edit', compact('user'));
+    }
+
+    /**
+     * アカウント情報更新処理
+     */
+    public function update(MyPageRequest $request)
+    {
         $user = Auth::user();
 
         $user->name = $request->name;

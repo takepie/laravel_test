@@ -875,3 +875,15 @@ main h1 {
     color: #dc3545;
     margin-bottom: 20px;
 }
+
+
+/* バリデーションエラー */
+.validation-errors {
+    color: #dc3545;
+    margin-bottom: 20px;
+}
+
+.validation-errors ul {
+    margin: 0;
+    padding-left: 20px;
+}
